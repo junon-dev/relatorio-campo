@@ -90,3 +90,12 @@ jobs:
         with:
           name: telas
           path: telas/
+
+      - name: Guardar prints no branch ci-telas
+        if: always()
+        run: |
+          cd telas
+          git init -q -b ci-telas
+          git add -A
+          git -c user.name="CI" -c user.email="ci@users.noreply.github.com" commit -qm "Prints da versão ${{ github.run_number }}"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" ci-telas

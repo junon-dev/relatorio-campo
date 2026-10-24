@@ -3,6 +3,7 @@
 set -u
 PKG=br.app.relatoriocampo
 mkdir -p telas
+MISSING=0
 adb install -r saida/RelatorioCampo.apk
 adb shell pm grant $PKG android.permission.POST_NOTIFICATIONS || true
 adb logcat -c
@@ -21,7 +22,7 @@ for n in ET.parse('ui.xml').iter('node'):
         break
 PY
 )
-  if [ -n "$xy" ]; then adb shell input tap $xy; sleep 2; else echo "Texto não encontrado: $1"; fi
+  if [ -n "$xy" ]; then adb shell input tap $xy; sleep 2; else echo "Texto não encontrado: $1" | tee -a telas/resumo.txt; MISSING=$((MISSING+1)); fi
 }
 shot() { adb exec-out screencap -p > "telas/$1.png"; }
 
@@ -42,8 +43,11 @@ tap_text "Mês"; sleep 1; shot 9-mes-escuro
 tap_text "ES"; sleep 1; shot 10-mes-espanhol
 
 adb logcat -d > telas/logcat.txt
+adb logcat -d -s AndroidRuntime:E > telas/erros.txt || true
+echo "Botões não encontrados: $MISSING" | tee -a telas/resumo.txt
 if grep -E "FATAL EXCEPTION|AndroidRuntime: Process: $PKG" telas/logcat.txt; then
-  echo "O app travou"; exit 1
+  echo "O app travou" | tee -a telas/resumo.txt; exit 1
 fi
 adb shell pidof $PKG || { echo "O app não está rodando"; exit 1; }
-echo "Teste no emulador OK"
+[ "$MISSING" -eq 0 ] || { echo "Navegação incompleta"; exit 1; }
+echo "Teste no emulador OK" | tee -a telas/resumo.txt
