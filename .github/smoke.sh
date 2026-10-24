@@ -38,6 +38,7 @@ adb shell input swipe 540 1800 540 700 400; sleep 1; shot 4-registro-adicionado
 tap_text "Estudos"; shot 5-estudos
 tap_text "Ano"; shot 6-ano
 tap_text "Ajustes"; shot 7-ajustes
+for i in 1 2 3; do adb shell input swipe 540 1800 540 500 300; sleep 1; done
 tap_text "Escuro"; sleep 1; shot 8-ajustes-escuro
 tap_text "Mês"; sleep 1; shot 9-mes-escuro
 tap_text "ES"; sleep 1; shot 10-mes-espanhol
