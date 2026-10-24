@@ -2,7 +2,14 @@
 
 App nativo em **Kotlin + Jetpack Compose** (Material 3) para registrar horas e enviar o relatório de serviço de campo. Funciona 100% offline, em português e espanhol.
 
-## Como instalar no celular
+## Baixar o app (sem instalar nada no computador)
+
+Abra no celular: **https://github.com/junon-dev/relatorio-campo/releases/latest** e toque em **RelatorioCampo.apk**.
+Na primeira vez, o Android pede para permitir a instalação pelo navegador; é só permitir. As novas versões instalam por cima da anterior, sem perder os dados.
+
+Cada envio para o branch `main` faz o GitHub Actions rodar os testes, compilar o APK, testá-lo num emulador Android 14 (com prints das telas no branch `ci-telas`) e publicar a nova versão em Releases.
+
+## Compilar no próprio computador (opcional)
 
 1. Instale o **Android Studio** (gratuito): https://developer.android.com/studio
 2. Descompacte este `.zip` e, no Android Studio, use **File → Open** e escolha a pasta `RelatorioCampo`.
