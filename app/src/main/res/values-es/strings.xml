@@ -9,4 +9,15 @@
     <string name="w_status_d">Muestra si el informe del mes pasado ya se envió</string>
     <string name="w_meta">Meta anual</string>
     <string name="w_meta_d">Horas en el año de servicio del precursor regular</string>
+    <string name="pv_cat">P. regular</string>
+    <string name="pv_toreport">h a informar</string>
+    <string name="pv_goal">50 h · faltan 12 h</string>
+    <string name="pv_left">Faltan 5 días para cerrar el mes.</string>
+    <string name="pv_today">Hoy: 1h45</string>
+    <string name="pv_report">Informe de septiembre</string>
+    <string name="pv_pending">No enviado</string>
+    <string name="pv_send">Enviar</string>
+    <string name="pv_sent">Ya lo envié</string>
+    <string name="pv_meta">Meta anual · 2026–27</string>
+    <string name="pv_ahead">12 h adelantado</string>
 </resources>

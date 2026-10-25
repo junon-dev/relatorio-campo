@@ -3,4 +3,12 @@
     <color name="window_bg">#F4F2EC</color>
     <color name="brand">#2B6A4C</color>
     <color name="w_accent_text">#225A40</color>
+    <color name="w_bg">#FFFFFF</color>
+    <color name="w_ink">#18211D</color>
+    <color name="w_muted">#56605A</color>
+    <color name="w_accent">#2B6A4C</color>
+    <color name="w_accent_ink">#FFFFFF</color>
+    <color name="w_accent_soft">#E2EFE7</color>
+    <color name="w_amber">#8A5410</color>
+    <color name="w_amber_soft">#FBECD6</color>
 </resources>

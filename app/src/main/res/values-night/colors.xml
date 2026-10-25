@@ -2,4 +2,12 @@
 <resources>
     <color name="window_bg">#0F1412</color>
     <color name="w_accent_text">#8FD6B0</color>
+    <color name="w_bg">#18201C</color>
+    <color name="w_ink">#E7ECE9</color>
+    <color name="w_muted">#9BA8A1</color>
+    <color name="w_accent">#6CC296</color>
+    <color name="w_accent_ink">#0B1410</color>
+    <color name="w_accent_soft">#1F3329</color>
+    <color name="w_amber">#E9B46B</color>
+    <color name="w_amber_soft">#3A2B17</color>
 </resources>

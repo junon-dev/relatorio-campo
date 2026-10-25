@@ -9,4 +9,15 @@
     <string name="w_status_d">Mostra se o relatório do mês passado já foi enviado</string>
     <string name="w_meta">Meta anual</string>
     <string name="w_meta_d">Horas no ano de serviço do pioneiro regular</string>
+    <string name="pv_cat">P. regular</string>
+    <string name="pv_toreport">h a relatar</string>
+    <string name="pv_goal">50 h · faltam 12 h</string>
+    <string name="pv_left">Faltam 5 dias para fechar o mês.</string>
+    <string name="pv_today">Hoje: 1h45</string>
+    <string name="pv_report">Relatório de setembro</string>
+    <string name="pv_pending">Não enviado</string>
+    <string name="pv_send">Enviar</string>
+    <string name="pv_sent">Já enviei</string>
+    <string name="pv_meta">Meta anual · 2026–27</string>
+    <string name="pv_ahead">12 h adiantado</string>
 </resources>

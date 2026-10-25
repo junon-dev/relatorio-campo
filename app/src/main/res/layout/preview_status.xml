@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/w_card" android:gravity="center_vertical" android:orientation="vertical" android:padding="14dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pv_report" android:textSize="12sp" android:textColor="@color/w_muted" android:textStyle="bold" android:maxLines="1" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pv_pending" android:textSize="18sp" android:textColor="@color/w_amber" android:textStyle="bold" android:maxLines="1" android:layout_marginTop="4dp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:orientation="horizontal"><TextView android:layout_width="0dp" android:layout_height="38dp" android:layout_weight="1" android:background="@drawable/w_btn" android:gravity="center" android:text="@string/pv_send" android:textColor="@color/w_accent_ink" android:textSize="13sp" android:textStyle="bold" /><TextView android:layout_width="0dp" android:layout_height="38dp" android:layout_weight="1" android:layout_marginStart="6dp" android:background="@drawable/w_chip" android:gravity="center" android:text="@string/pv_sent" android:textColor="@color/w_accent_text" android:textSize="13sp" android:textStyle="bold" /></LinearLayout>
+</LinearLayout>

@@ -60,6 +60,7 @@ adb shell input swipe 540 1800 540 700 400; sleep 1; shot 4-registro-adicionado
 tap_text "Estudos"; shot 5-estudos
 tap_text "Ano"; shot 6-ano
 tap_text "Ajustes"; shot 7-ajustes
+tap_text "P. regular"; sleep 1
 
 # ---- widgets: adiciona os 4 pela tela de Ajustes e confirma a janela do Android ----
 for k in 1 2 3 4; do

@@ -117,6 +117,7 @@ private fun style(color: ColorProvider, size: Int, bold: Boolean = false) =
 private fun Card(modifier: GlanceModifier = GlanceModifier, content: @Composable ColumnScope.() -> Unit) {
     Column(
         modifier = GlanceModifier.fillMaxSize().cornerRadius(22.dp).background(WC.bg).padding(14.dp).then(modifier),
+        verticalAlignment = Alignment.CenterVertically,
         content = content,
     )
 }
@@ -219,7 +220,7 @@ private fun ResumoContent(d: WidgetData) {
                 Stat(fmtMin(c.credit), t("credit"), GlanceModifier.defaultWeight())
             }
         }
-        Spacer(GlanceModifier.defaultWeight())
+        Spacer(GlanceModifier.height(8.dp))
         Text(daysLeftText(t, d), style = style(if (left <= d.s.remEnd) WC.amber else WC.muted, 11, bold = left <= d.s.remEnd), maxLines = 1)
     }
 }
@@ -287,7 +288,7 @@ private fun CronometroContent(d: WidgetData) {
                 )
             }
         }
-        Spacer(GlanceModifier.defaultWeight())
+        Spacer(GlanceModifier.height(12.dp))
         Row(GlanceModifier.fillMaxWidth()) {
             listOf(15 to "+15", 30 to "+30", 60 to "+1h", 120 to "+2h").forEachIndexed { i, (q, label) ->
                 if (i > 0) Spacer(GlanceModifier.width(6.dp))
@@ -382,7 +383,7 @@ private fun StatusContent(d: WidgetData) {
             when { pending -> t("wPending"); sent -> t("wSent"); else -> t("wNothing") },
             style = style(if (pending) WC.amber else WC.accentText, 18, bold = true), maxLines = 1,
         )
-        Spacer(GlanceModifier.defaultWeight())
+        Spacer(GlanceModifier.height(10.dp))
         if (pending) {
             val share = Intent(ctx, MainActivity::class.java)
                 .putExtra(Reminders.EXTRA_GOTO, prev)
@@ -432,9 +433,8 @@ private fun MetaContent(d: WidgetData) {
         Text("${t("goalYear")} · $sy–${(sy + 1) % 100}", style = style(WC.muted, 12, bold = true), maxLines = 1)
         Spacer(GlanceModifier.height(2.dp))
         if (yp == null) {
-            Spacer(GlanceModifier.defaultWeight())
+            Spacer(GlanceModifier.height(6.dp))
             Text(t("wOnlyReg"), style = style(WC.muted, 13), maxLines = 2)
-            Spacer(GlanceModifier.defaultWeight())
         } else {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text("${yp.hours}", style = style(WC.ink, 30, bold = true))
@@ -444,7 +444,7 @@ private fun MetaContent(d: WidgetData) {
                 progress = if (yp.goal > 0) (yp.hours / yp.goal.toFloat()).coerceIn(0f, 1f) else 0f,
                 modifier = GlanceModifier.fillMaxWidth().height(6.dp), color = WC.accent, backgroundColor = WC.accentSoft,
             )
-            Spacer(GlanceModifier.defaultWeight())
+            Spacer(GlanceModifier.height(8.dp))
             val diff = yp.diff
             Text(
                 when { diff == 0 -> t("onPace"); diff > 0 -> t("ahead", "n" to diff); else -> t("behind", "n" to -diff) },
