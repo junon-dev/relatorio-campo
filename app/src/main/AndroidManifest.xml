@@ -38,5 +38,53 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".widget.ResumoReceiver"
+            android:exported="true"
+            android:label="@string/w_resumo">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_resumo" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.CronometroReceiver"
+            android:exported="true"
+            android:label="@string/w_crono">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_crono" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.StatusReceiver"
+            android:exported="true"
+            android:label="@string/w_status">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_status" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.MetaReceiver"
+            android:exported="true"
+            android:label="@string/w_meta">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_meta" />
+        </receiver>
     </application>
 </manifest>

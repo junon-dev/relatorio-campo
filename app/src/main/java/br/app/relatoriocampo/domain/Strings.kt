@@ -56,6 +56,16 @@ class Str(val lang: String) {
             "openM" to "Abrir {m}",
             "nEndT" to "Mês de serviço acabando", "nSendT" to "Enviar relatório de serviço de campo", "nSendD" to "Toque para abrir o relatório de {m}.",
             "chEnd" to "Lembretes de relatório",
+            "wNotYet" to "Participação ainda não marcada", "wToday" to "Hoje", "wReportOf" to "Relatório de {m}",
+            "wPending" to "Não enviado", "wSent" to "Enviado ✓", "wNothing" to "Nada pendente", "wSend" to "Enviar",
+            "wOnlyReg" to "Aparece nos meses como pioneiro regular.", "wExpected" to "Esperado até agora: {n} h",
+            "widgets" to "Widgets na tela inicial", "wAdd" to "Adicionar",
+            "wResumo" to "Resumo do mês", "wResumoD" to "Horas a relatar, meta e dias para fechar o mês",
+            "wCrono" to "Cronômetro e lançamento rápido", "wCronoD" to "Iniciar/parar e somar +15, +30, +1h, +2h",
+            "wStatus" to "Status do relatório", "wStatusD" to "Avisa se o relatório do mês passado ainda não foi enviado",
+            "wMeta" to "Meta anual", "wMetaD" to "Horas no ano de serviço do pioneiro regular",
+            "wHint" to "Se o botão não funcionar: toque e segure num espaço vazio da tela inicial → Widgets → Relatório de Campo.",
+            "wAsked" to "Confirme na janela que apareceu.",
             "ok" to "OK", "cancel" to "Cancelar", "langLabel" to "Idioma",
         )
 
@@ -106,6 +116,16 @@ class Str(val lang: String) {
             "openM" to "Abrir {m}",
             "nEndT" to "El mes de servicio está terminando", "nSendT" to "Enviar el informe de predicación", "nSendD" to "Toque para abrir el informe de {m}.",
             "chEnd" to "Recordatorios del informe",
+            "wNotYet" to "Participación aún no marcada", "wToday" to "Hoy", "wReportOf" to "Informe de {m}",
+            "wPending" to "No enviado", "wSent" to "Enviado ✓", "wNothing" to "Nada pendiente", "wSend" to "Enviar",
+            "wOnlyReg" to "Aparece en los meses como precursor regular.", "wExpected" to "Esperado hasta ahora: {n} h",
+            "widgets" to "Widgets en la pantalla de inicio", "wAdd" to "Agregar",
+            "wResumo" to "Resumen del mes", "wResumoD" to "Horas a informar, meta y días para cerrar el mes",
+            "wCrono" to "Cronómetro y registro rápido", "wCronoD" to "Iniciar/detener y sumar +15, +30, +1h, +2h",
+            "wStatus" to "Estado del informe", "wStatusD" to "Avisa si el informe del mes pasado todavía no se envió",
+            "wMeta" to "Meta anual", "wMetaD" to "Horas en el año de servicio del precursor regular",
+            "wHint" to "Si el botón no funciona: mantenga presionado un espacio vacío de la pantalla de inicio → Widgets → Informe de Predicación.",
+            "wAsked" to "Confirme en la ventana que apareció.",
             "ok" to "OK", "cancel" to "Cancelar", "langLabel" to "Idioma",
         )
     }

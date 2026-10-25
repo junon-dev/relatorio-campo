@@ -58,6 +58,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -71,7 +72,13 @@ import br.app.relatoriocampo.domain.Ym
 import br.app.relatoriocampo.ui.theme.appColors
 
 @Composable
-fun App(vm: AppViewModel, gotoMonth: String?, onGotoHandled: () -> Unit) {
+fun App(
+    vm: AppViewModel,
+    gotoMonth: String?,
+    onGotoHandled: () -> Unit,
+    shareMonth: String? = null,
+    onShareHandled: () -> Unit = {},
+) {
     val s by vm.settings.collectAsStateWithLifecycle()
     val entriesOrNull by vm.entries.collectAsStateWithLifecycle()
     val contactsOrNull by vm.contacts.collectAsStateWithLifecycle()
@@ -89,6 +96,18 @@ fun App(vm: AppViewModel, gotoMonth: String?, onGotoHandled: () -> Unit) {
 
     LaunchedEffect(gotoMonth) {
         if (gotoMonth != null) { view = gotoMonth; tab = "month"; onGotoHandled() }
+    }
+
+    // Botão "Enviar" do widget: abre o compartilhamento com o relatório pronto.
+    val ctx = LocalContext.current
+    LaunchedEffect(shareMonth, entriesOrNull, monthsOrNull) {
+        val m = shareMonth ?: return@LaunchedEffect
+        val e = entriesOrNull ?: return@LaunchedEffect
+        val mo = monthsOrNull ?: return@LaunchedEffect
+        val mc = Calc.calcAll(s, e, mo, m, cur).getValue(m)
+        onShareHandled()
+        shareText(ctx, Calc.reportText(m, mc, s, mo[m]?.notes, t), t("share"))
+        snack.show(t("askSent"), t("markSent")) { vm.updateMonth(m) { it.copy(sent = true) } }
     }
 
     // Pede permissão de notificação uma vez (Android 13+).

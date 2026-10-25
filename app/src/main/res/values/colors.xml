@@ -2,4 +2,5 @@
 <resources>
     <color name="window_bg">#F4F2EC</color>
     <color name="brand">#2B6A4C</color>
+    <color name="w_accent_text">#225A40</color>
 </resources>

@@ -12,6 +12,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.automirrored.outlined.Send
+import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material.icons.outlined.TrackChanges
+import androidx.compose.material.icons.outlined.Widgets
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
+import br.app.relatoriocampo.widget.CronometroReceiver
+import br.app.relatoriocampo.widget.MetaReceiver
+import br.app.relatoriocampo.widget.ResumoReceiver
+import br.app.relatoriocampo.widget.StatusReceiver
+import br.app.relatoriocampo.widget.Widgets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -120,6 +135,31 @@ fun SettingsScreen(vm: AppViewModel, s: Settings, snack: Snack) {
         Spacer(Modifier.height(4.dp))
         ToggleRow(t("remDaily"), s.remDaily) { v -> vm.updateSettings { it.copy(remDaily = v) } }
         Note(t("remHint"))
+    }
+
+    // ---------- widgets ----------
+    SectionCard(t("widgets"), Icons.Outlined.Widgets) {
+        listOf(
+            Triple(ResumoReceiver::class.java, "wResumo", Icons.Outlined.CalendarMonth),
+            Triple(CronometroReceiver::class.java, "wCrono", Icons.Outlined.Timer),
+            Triple(StatusReceiver::class.java, "wStatus", Icons.AutoMirrored.Outlined.Send),
+            Triple(MetaReceiver::class.java, "wMeta", Icons.Outlined.TrackChanges),
+        ).forEachIndexed { i, (cls, key, icon) ->
+            if (i > 0) AppDivider()
+            Row(Modifier.fillMaxWidth().heightIn(min = 64.dp).padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                KindIcon(icon, col.accentText, col.accentSoft)
+                Spacer(Modifier.width(12.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(t(key), fontWeight = FontWeight.Bold, color = col.ink)
+                    Text(t(key + "D"), fontSize = 13.sp, color = col.muted)
+                }
+                Spacer(Modifier.width(8.dp))
+                SmallButton(t("wAdd"), Icons.Rounded.Add) {
+                    snack.show(if (Widgets.requestPin(ctx, cls)) t("wAsked") else t("wHint"))
+                }
+            }
+        }
+        Note(t("wHint"))
     }
 
     // ---------- regras ----------

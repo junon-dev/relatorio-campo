@@ -21,6 +21,7 @@ import br.app.relatoriocampo.data.SettingsStore
 import br.app.relatoriocampo.domain.ReminderCalc
 import br.app.relatoriocampo.domain.Str
 import br.app.relatoriocampo.domain.Ym
+import br.app.relatoriocampo.widget.Widgets
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -127,6 +128,7 @@ class ReminderReceiver : BroadcastReceiver() {
                 Reminders.fire(context.applicationContext, action)
             } finally {
                 Reminders.scheduleAll(context.applicationContext)
+                Widgets.updateAll(context.applicationContext)
                 result.finish()
             }
         }
@@ -137,5 +139,9 @@ class ReminderReceiver : BroadcastReceiver() {
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Reminders.scheduleAll(context.applicationContext)
+        val result = goAsync()
+        CoroutineScope(Dispatchers.IO).launch {
+            try { Widgets.updateAll(context.applicationContext) } finally { result.finish() }
+        }
     }
 }

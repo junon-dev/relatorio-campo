@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Relatório de Campo</string>
+    <string name="w_resumo">Resumo do mês</string>
+    <string name="w_resumo_d">Horas a relatar, meta e dias para fechar o mês</string>
+    <string name="w_crono">Cronômetro e lançamento rápido</string>
+    <string name="w_crono_d">Iniciar/parar e somar +15, +30, +1h, +2h</string>
+    <string name="w_status">Status do relatório</string>
+    <string name="w_status_d">Mostra se o relatório do mês passado já foi enviado</string>
+    <string name="w_meta">Meta anual</string>
+    <string name="w_meta_d">Horas no ano de serviço do pioneiro regular</string>
 </resources>

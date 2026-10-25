@@ -22,10 +22,19 @@ class MainActivity : ComponentActivity() {
     /** Mês a abrir quando o app é aberto por uma notificação. */
     private val gotoMonth = mutableStateOf<String?>(null)
 
+    /** Mês cujo relatório deve abrir direto no compartilhamento (botão Enviar do widget). */
+    private val shareMonth = mutableStateOf<String?>(null)
+
+    private fun readIntent(intent: Intent?) {
+        val m = intent?.getStringExtra(Reminders.EXTRA_GOTO) ?: return
+        gotoMonth.value = m
+        if (intent.getBooleanExtra(EXTRA_SHARE, false)) shareMonth.value = m
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        gotoMonth.value = intent?.getStringExtra(Reminders.EXTRA_GOTO)
+        readIntent(intent)
         setContent {
             val vm: AppViewModel = viewModel()
             val settings by vm.settings.collectAsStateWithLifecycle()
@@ -39,18 +48,23 @@ class MainActivity : ComponentActivity() {
                 onDispose {}
             }
             RelatorioTheme(dark = dark) {
-                App(vm = vm, gotoMonth = gotoMonth.value, onGotoHandled = { gotoMonth.value = null })
+                App(
+                    vm = vm,
+                    gotoMonth = gotoMonth.value, onGotoHandled = { gotoMonth.value = null },
+                    shareMonth = shareMonth.value, onShareHandled = { shareMonth.value = null },
+                )
             }
         }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        intent.getStringExtra(Reminders.EXTRA_GOTO)?.let { gotoMonth.value = it }
+        readIntent(intent)
     }
 
-    private companion object {
-        val LIGHT_SCRIM = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
-        val DARK_SCRIM = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
+    companion object {
+        const val EXTRA_SHARE = "share_report"
+        private val LIGHT_SCRIM = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
+        private val DARK_SCRIM = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
     }
 }

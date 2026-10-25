@@ -14,8 +14,12 @@ import br.app.relatoriocampo.domain.Entry
 import br.app.relatoriocampo.domain.MonthData
 import br.app.relatoriocampo.domain.Settings
 import br.app.relatoriocampo.notify.Reminders
+import br.app.relatoriocampo.widget.Widgets
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,6 +53,14 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     val epoch: StateFlow<Int> = _epoch.asStateFlow()
 
     private val monthLock = Mutex()
+
+    init {
+        // Qualquer mudança nos dados (no app ou nos widgets) atualiza os widgets da tela inicial.
+        viewModelScope.launch {
+            combine(dao.entries(), dao.months(), store.flow) { _, _, _ -> Unit }
+                .collectLatest { delay(400); Widgets.updateAll(getApplication()) }
+        }
+    }
 
     private fun newId() = UUID.randomUUID().toString().substring(0, 12)
 

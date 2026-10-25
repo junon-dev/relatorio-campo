@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Informe de Predicación</string>
+    <string name="w_resumo">Resumen del mes</string>
+    <string name="w_resumo_d">Horas a informar, meta y días para cerrar el mes</string>
+    <string name="w_crono">Cronómetro y registro rápido</string>
+    <string name="w_crono_d">Iniciar/detener y sumar +15, +30, +1h, +2h</string>
+    <string name="w_status">Estado del informe</string>
+    <string name="w_status_d">Muestra si el informe del mes pasado ya se envió</string>
+    <string name="w_meta">Meta anual</string>
+    <string name="w_meta_d">Horas en el año de servicio del precursor regular</string>
 </resources>
