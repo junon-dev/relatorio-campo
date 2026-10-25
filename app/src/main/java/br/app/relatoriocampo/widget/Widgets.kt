@@ -27,6 +27,7 @@ import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.AndroidRemoteViews
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.LinearProgressIndicator
 import androidx.glance.appwidget.SizeMode
@@ -35,7 +36,6 @@ import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
-import androidx.glance.appwidget.updateAll
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -114,9 +114,11 @@ private fun style(color: ColorProvider, size: Int, bold: Boolean = false) =
     TextStyle(color = color, fontSize = size.sp, fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal)
 
 @Composable
-private fun Card(modifier: GlanceModifier = GlanceModifier, content: @Composable ColumnScope.() -> Unit) {
+private fun Card(opacity: Int, modifier: GlanceModifier = GlanceModifier, content: @Composable ColumnScope.() -> Unit) {
+    val a = opacity.coerceIn(0, 100) / 100f
+    val bg = DayNight(day = Color(0xFFFFFFFF).copy(alpha = a), night = Color(0xFF18201C).copy(alpha = a))
     Column(
-        modifier = GlanceModifier.fillMaxSize().cornerRadius(22.dp).background(WC.bg).padding(14.dp).then(modifier),
+        modifier = GlanceModifier.fillMaxSize().cornerRadius(22.dp).background(bg).padding(14.dp).then(modifier),
         verticalAlignment = Alignment.CenterVertically,
         content = content,
     )
@@ -145,12 +147,22 @@ private fun daysLeftText(t: Str, d: WidgetData): String {
 
 /** Atualiza todos os widgets (chamado quando os dados mudam). */
 object Widgets {
+    /**
+     * Atualiza cada widget com o tipo certo, localizando-os pelo receiver de cada um.
+     * (Não usa GlanceAppWidget.updateAll, que identifica os widgets pelo nome da classe.)
+     */
     suspend fun updateAll(context: Context) {
-        runCatching {
-            ResumoWidget().updateAll(context)
-            CronometroWidget().updateAll(context)
-            StatusWidget().updateAll(context)
-            MetaWidget().updateAll(context)
+        val awm = AppWidgetManager.getInstance(context)
+        val glance = GlanceAppWidgetManager(context)
+        listOf(
+            ResumoReceiver::class.java to ResumoWidget(),
+            CronometroReceiver::class.java to CronometroWidget(),
+            StatusReceiver::class.java to StatusWidget(),
+            MetaReceiver::class.java to MetaWidget(),
+        ).forEach { (receiver, widget) ->
+            awm.getAppWidgetIds(ComponentName(context, receiver)).forEach { id ->
+                runCatching { widget.update(context, glance.getGlanceIdBy(id)) }
+            }
         }
     }
 
@@ -181,7 +193,7 @@ private fun ResumoContent(d: WidgetData) {
     val c = d.all.getValue(d.cur)
     val wide = LocalSize.current.width >= 220.dp
     val left = ReminderCalc.daysLeft(LocalDate.now())
-    Card(GlanceModifier.clickable(openApp())) {
+    Card(d.s.widgetOpacity, GlanceModifier.clickable(openApp())) {
         Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(t(c.cat + "S"), GlanceModifier.defaultWeight(), style = style(WC.cat(c.cat), 12, bold = true), maxLines = 1)
             Text(Ym.short(d.cur, d.s.lang), style = style(WC.muted, 12), maxLines = 1)
@@ -259,7 +271,7 @@ private fun CronometroContent(d: WidgetData) {
     val c = d.all.getValue(d.cur)
     val today = LocalDate.now().toString()
     val todayMin = d.entries.filter { it.date == today }.sumOf { it.min }
-    Card {
+    Card(d.s.widgetOpacity) {
         Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Column(GlanceModifier.defaultWeight().clickable(openApp())) {
                 if (start != null) {
@@ -368,7 +380,7 @@ private fun StatusContent(d: WidgetData) {
     val pending = pc != null && !pc.sent && pc.hasData
     val sent = pc?.sent == true
     val prevName = Ym.monthOnly(prev, d.s.lang)
-    Card(if (pending) GlanceModifier else GlanceModifier.clickable(openApp())) {
+    Card(d.s.widgetOpacity, if (pending) GlanceModifier else GlanceModifier.clickable(openApp())) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
                 ImageProvider(if (pending) R.drawable.ic_w_send else R.drawable.ic_w_check), contentDescription = null,
@@ -429,7 +441,7 @@ private fun MetaContent(d: WidgetData) {
     val t = d.t
     val sy = Ym.serviceYear(d.cur)
     val yp = Calc.yearProgress(sy, d.all, d.months, d.s, d.cur)
-    Card(GlanceModifier.clickable(openApp())) {
+    Card(d.s.widgetOpacity, GlanceModifier.clickable(openApp())) {
         Text("${t("goalYear")} · $sy–${(sy + 1) % 100}", style = style(WC.muted, 12, bold = true), maxLines = 1)
         Spacer(GlanceModifier.height(2.dp))
         if (yp == null) {

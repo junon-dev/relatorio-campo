@@ -66,6 +66,7 @@ class Str(val lang: String) {
             "wMeta" to "Meta anual", "wMetaD" to "Horas no ano de serviço do pioneiro regular",
             "wHint" to "Se o botão não funcionar: toque e segure num espaço vazio da tela inicial → Widgets → Relatório de Campo.",
             "wAsked" to "Confirme na janela que apareceu.",
+            "wOpacity" to "Fundo dos widgets", "wOpacityD" to "{n}% opaco", "wOpacityHint" to "Com pouco fundo, o texto pode ficar difícil de ler sobre papéis de parede muito claros ou escuros.",
             "ok" to "OK", "cancel" to "Cancelar", "langLabel" to "Idioma",
         )
 
@@ -126,6 +127,7 @@ class Str(val lang: String) {
             "wMeta" to "Meta anual", "wMetaD" to "Horas en el año de servicio del precursor regular",
             "wHint" to "Si el botón no funciona: mantenga presionado un espacio vacío de la pantalla de inicio → Widgets → Informe de Predicación.",
             "wAsked" to "Confirme en la ventana que apareció.",
+            "wOpacity" to "Fondo de los widgets", "wOpacityD" to "{n}% opaco", "wOpacityHint" to "Con poco fondo, el texto puede ser difícil de leer sobre fondos de pantalla muy claros u oscuros.",
             "ok" to "OK", "cancel" to "Cancelar", "langLabel" to "Idioma",
         )
     }

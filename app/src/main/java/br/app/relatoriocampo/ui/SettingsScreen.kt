@@ -12,6 +12,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import kotlin.math.roundToInt
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
@@ -159,6 +170,36 @@ fun SettingsScreen(vm: AppViewModel, s: Settings, snack: Snack) {
                 }
             }
         }
+        AppDivider()
+        // transparência do fundo dos widgets, com prévia sobre um fundo colorido
+        var opacity by remember(epoch) { mutableFloatStateOf(s.widgetOpacity.toFloat()) }
+        Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(t("wOpacity"), Modifier.weight(1f), fontWeight = FontWeight.Bold, color = col.ink)
+            Text(t("wOpacityD", "n" to opacity.roundToInt()), color = col.muted, fontSize = 14.sp)
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                Modifier.size(width = 64.dp, height = 44.dp).clip(RoundedCornerShape(12.dp))
+                    .background(Brush.linearGradient(listOf(Color(0xFF1B3A6B), Color(0xFFE8A33D), Color(0xFF2B6A4C)))),
+                contentAlignment = Alignment.Center,
+            ) {
+                Box(
+                    Modifier.size(width = 46.dp, height = 28.dp).clip(RoundedCornerShape(8.dp))
+                        .background((if (col.isDark) Color(0xFF18201C) else Color.White).copy(alpha = opacity / 100f)),
+                    contentAlignment = Alignment.Center,
+                ) { Text("12 h", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = col.ink) }
+            }
+            Spacer(Modifier.width(12.dp))
+            Slider(
+                value = opacity,
+                onValueChange = { opacity = it },
+                onValueChangeFinished = { vm.updateSettings { it.copy(widgetOpacity = opacity.roundToInt()) } },
+                valueRange = 0f..100f, steps = 9,
+                modifier = Modifier.weight(1f),
+                colors = SliderDefaults.colors(thumbColor = col.accent, activeTrackColor = col.accent, inactiveTrackColor = col.accentSoft),
+            )
+        }
+        Note(t("wOpacityHint"))
         Note(t("wHint"))
     }
 

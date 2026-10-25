@@ -51,6 +51,7 @@ data class Settings(
     val remMinute: Int = 0,
     val timerStart: Long? = null,
     val askedNotif: Boolean = false,
+    val widgetOpacity: Int = 100, // % de opacidade do fundo dos widgets
 )
 
 /** Resultado calculado de um mês. Tempos em minutos. */

@@ -23,6 +23,7 @@ object Backup {
             put("carry", s.carry); put("lang", s.lang); put("theme", s.theme); put("entryMode", s.entryMode)
             put("remEnd", s.remEnd); put("remDaily", s.remDaily); put("remSendDay", s.remSendDay)
             put("remTime", "%02d:%02d".format(s.remHour, s.remMinute))
+            put("widgetOpacity", s.widgetOpacity)
         })
         root.put("entries", JSONArray().apply {
             entries.forEach { e -> put(JSONObject().put("id", e.id).put("date", e.date).put("min", e.min).put("kind", e.kind).put("note", e.note)) }
@@ -66,6 +67,7 @@ object Backup {
             lang = so.optStr("lang", current.lang), theme = so.optStr("theme", "auto"), entryMode = so.optStr("entryMode", "daily"),
             remEnd = so.optInt("remEnd", 5), remDaily = so.optBoolean("remDaily", false), remSendDay = so.optInt("remSendDay", 1),
             remHour = time.getOrNull(0)?.toIntOrNull() ?: 9, remMinute = time.getOrNull(1)?.toIntOrNull() ?: 0,
+            widgetOpacity = so.optInt("widgetOpacity", current.widgetOpacity),
             timerStart = if (root.has("timer") && !root.isNull("timer")) root.optLong("timer") else null,
         )
         val entries = (0 until ea.length()).map { i ->

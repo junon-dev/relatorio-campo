@@ -46,6 +46,18 @@ PY
   if [ -n "$xy" ]; then adb shell input tap $xy; sleep 2; return 0; fi
   return 1
 }
+# confere se algum elemento da tela contém o texto (parcial, sem diferenciar maiúsculas)
+has_text() {
+  adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+  adb pull /sdcard/ui.xml ui.xml >/dev/null 2>&1
+  python3 - "$1" <<'PY'
+import sys, xml.etree.ElementTree as ET
+w = sys.argv[1].lower()
+ok = any(w in ((n.get('text') or '') + ' ' + (n.get('content-desc') or '')).lower() for n in ET.parse('ui.xml').iter('node'))
+sys.exit(0 if ok else 1)
+PY
+}
+check() { has_text "$1" || { echo "Widget errado: '$1' não aparece ($2)" | tee -a telas/resumo.txt; MISSING=$((MISSING+1)); }; }
 shot() { adb exec-out screencap -p > "telas/$1.png"; }
 
 adb shell am start -W -n $PKG/.MainActivity
@@ -86,6 +98,14 @@ if tap_any "+15" || { adb shell input swipe 900 1200 150 1200 300; sleep 2; tap_
 else
   echo "Widget do cronômetro não encontrado na tela inicial" | tee -a telas/resumo.txt; MISSING=$((MISSING+1))
 fi
+# ---- regressão: depois de os widgets ficarem ociosos, um toque não pode trocar o conteúdo de um pelo de outro ----
+sleep 75
+tap_any "+30"; sleep 6; shot w8-apos-espera
+check "a relatar" "resumo, página 1"; check "+30" "cronômetro, página 1"
+adb shell input swipe 900 1200 150 1200 300; sleep 3; shot w9-pagina-2
+check "Relatório de" "status, página 2"; check "Meta anual" "meta, página 2"
+adb shell input swipe 150 1200 900 1200 300; sleep 2
+
 adb shell am start -W -n $PKG/.MainActivity; sleep 3
 tap_text "Ajustes"
 for i in 1 2 3; do adb shell input swipe 540 600 540 1800 200; done

@@ -42,6 +42,7 @@ class SettingsStore private constructor(context: Context) {
             remMinute = prefs.getInt("remMinute", d.remMinute),
             timerStart = if (prefs.contains("timerStart")) prefs.getLong("timerStart", 0L) else null,
             askedNotif = prefs.getBoolean("askedNotif", d.askedNotif),
+            widgetOpacity = prefs.getInt("widgetOpacity", d.widgetOpacity),
         )
     }
 
@@ -54,6 +55,7 @@ class SettingsStore private constructor(context: Context) {
             putInt("remSendDay", s.remSendDay); putInt("remHour", s.remHour); putInt("remMinute", s.remMinute)
             if (s.timerStart != null) putLong("timerStart", s.timerStart) else remove("timerStart")
             putBoolean("askedNotif", s.askedNotif)
+            putInt("widgetOpacity", s.widgetOpacity)
         }.apply()
     }
 
