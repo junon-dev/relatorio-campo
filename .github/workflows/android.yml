@@ -3,6 +3,7 @@ name: Gerar APK
 on:
   push:
     branches: [main]
+    paths-ignore: ['web/**', '.github/workflows/web.yml', 'README.md', 'CLAUDE.md']
   workflow_dispatch:
 
 permissions:

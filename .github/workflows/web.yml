@@ -1,0 +1,24 @@
+name: Publicar versão web
+
+on:
+  push:
+    branches: [main]
+    paths: ['web/**', '.github/workflows/web.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Publicar a pasta web no branch gh-pages (GitHub Pages)
+        run: |
+          cd web
+          touch .nojekyll
+          git init -q -b gh-pages
+          git add -A
+          git -c user.name="CI" -c user.email="ci@users.noreply.github.com" commit -qm "Versão web ${{ github.run_number }}"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages

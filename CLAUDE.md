@@ -14,3 +14,9 @@ Depois de enviar qualquer mudança para `main`:
 - A lógica pura fica em `app/src/main/java/br/app/relatoriocampo/domain/` e tem testes em `app/src/test/` (rodam no CI).
 - Textos PT/ES ficam em `domain/Strings.kt`; os dois idiomas precisam ter as mesmas chaves (há teste para isso).
 - A chave de assinatura em `keystore/` é fixa de propósito, para que as atualizações instalem por cima sem perder dados.
+
+## Versão web (iPhone)
+- Fica em `web/` (index.html + manifest + service worker). O workflow "Publicar versão web" envia a pasta para o branch `gh-pages`,
+  servido em https://junon-dev.github.io/relatorio-campo/ — no iPhone: Safari → Compartilhar → Adicionar à Tela de Início.
+- Ao mudar arquivos em `web/`, aumente a versão de `CACHE` em `web/sw.js` para os aparelhos baixarem a atualização.
+- Mudanças só em `web/` não disparam o build do Android.
