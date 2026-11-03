@@ -1,0 +1,6 @@
+4:e: file:///home/runner/work/relatorio-campo/relatorio-campo/app/build.gradle.kts:21:61: Unresolved reference: time
+12:* What went wrong:
+13:Script compilation error:
+25:* Exception is:
+26:ScriptCompilationException(scriptCompilationErrors=[ScriptCompilationError(message=Unresolved reference: time, location=/home/runner/.gradle/.tmp/gradle-kotlin-dsl-9145756386085417050.tmp/build.gradle.kts (21:61))])
+277:BUILD FAILED in 16s
