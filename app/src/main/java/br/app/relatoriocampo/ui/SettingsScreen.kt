@@ -22,6 +22,7 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Icon
 import androidx.compose.ui.semantics.Role
 import br.app.relatoriocampo.BuildConfig
+import br.app.relatoriocampo.ui.theme.FONT_SCALES
 import br.app.relatoriocampo.ui.theme.PALETTES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -284,19 +285,27 @@ fun SettingsScreen(vm: AppViewModel, s: Settings, snack: Snack) {
         }
 
         // tamanho do texto: barra com 6 posições, como no Roteiro para Presidente
+        // Enquanto arrasta, só o exemplo muda de tamanho; o app inteiro muda ao soltar
+        // (mudar tudo no meio do gesto desloca a barra e interrompe o arraste).
         FieldLabel(t("fontSize"), Modifier.padding(top = 14.dp))
+        var fsPending by remember(s.fontSize) { mutableFloatStateOf(s.fontSize.toFloat()) }
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Text("A", fontSize = 15.sp, color = col.muted)
             Slider(
-                value = s.fontSize.toFloat(),
-                onValueChange = { v -> val n = v.roundToInt(); if (n != s.fontSize) vm.updateSettings { it.copy(fontSize = n) } },
+                value = fsPending,
+                onValueChange = { fsPending = it },
+                onValueChangeFinished = {
+                    val n = fsPending.roundToInt().coerceIn(0, FONT_SCALES.size - 1)
+                    if (n != s.fontSize) vm.updateSettings { it.copy(fontSize = n) }
+                },
                 valueRange = 0f..5f, steps = 4,
                 modifier = Modifier.weight(1f).padding(horizontal = 14.dp),
                 colors = SliderDefaults.colors(thumbColor = col.accent, activeTrackColor = col.accent, inactiveTrackColor = col.accentSoft),
             )
             Text("A", fontSize = 30.sp, color = col.muted)
         }
-        Text(t("fontPreview"), color = col.ink, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+        val ratio = FONT_SCALES[fsPending.roundToInt().coerceIn(0, FONT_SCALES.size - 1)] / FONT_SCALES[s.fontSize.coerceIn(0, FONT_SCALES.size - 1)]
+        Text(t("fontPreview"), color = col.ink, fontSize = (16 * ratio).sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
     }
 
     // ---------- backup ----------
