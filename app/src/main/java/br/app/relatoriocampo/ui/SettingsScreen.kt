@@ -12,6 +12,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.border
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.NewReleases
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.Icon
+import androidx.compose.ui.semantics.Role
+import br.app.relatoriocampo.BuildConfig
+import br.app.relatoriocampo.ui.theme.PALETTES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -23,7 +34,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import kotlin.math.roundToInt
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.automirrored.outlined.Send
@@ -246,6 +256,47 @@ fun SettingsScreen(vm: AppViewModel, s: Settings, snack: Snack) {
             ),
             s.theme, { v -> vm.updateSettings { it.copy(theme = v) } },
         )
+
+        // cor do app
+        FieldLabel(t("accent"), Modifier.padding(top = 16.dp))
+        Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.SpaceBetween) {
+            PALETTES.forEach { pal ->
+                val on = s.accent == pal.key
+                val sw = if (col.isDark) pal.dark[0] else pal.light[0]
+                Column(
+                    Modifier.width(60.dp).clip(RoundedCornerShape(12.dp))
+                        .selectable(selected = on, role = Role.RadioButton, onClick = { vm.updateSettings { it.copy(accent = pal.key) } })
+                        .padding(vertical = 6.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Box(
+                        Modifier.size(44.dp).clip(CircleShape).background(sw)
+                            .then(if (on) Modifier.border(3.dp, col.ink, CircleShape) else Modifier),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        if (on) Icon(Icons.Rounded.Check, null, tint = if (col.isDark) pal.dark[1] else pal.light[1], modifier = Modifier.size(22.dp))
+                    }
+                    Spacer(Modifier.height(4.dp))
+                    Text(t("c_" + pal.key), fontSize = 12.sp, color = if (on) col.ink else col.muted,
+                        fontWeight = if (on) FontWeight.Bold else FontWeight.Normal, maxLines = 1)
+                }
+            }
+        }
+
+        // tamanho do texto: barra com 6 posições, como no Roteiro para Presidente
+        FieldLabel(t("fontSize"), Modifier.padding(top = 14.dp))
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Text("A", fontSize = 15.sp, color = col.muted)
+            Slider(
+                value = s.fontSize.toFloat(),
+                onValueChange = { v -> val n = v.roundToInt(); if (n != s.fontSize) vm.updateSettings { it.copy(fontSize = n) } },
+                valueRange = 0f..5f, steps = 4,
+                modifier = Modifier.weight(1f).padding(horizontal = 14.dp),
+                colors = SliderDefaults.colors(thumbColor = col.accent, activeTrackColor = col.accent, inactiveTrackColor = col.accentSoft),
+            )
+            Text("A", fontSize = 30.sp, color = col.muted)
+        }
+        Text(t("fontPreview"), color = col.ink, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
     }
 
     // ---------- backup ----------
@@ -267,10 +318,22 @@ fun SettingsScreen(vm: AppViewModel, s: Settings, snack: Snack) {
         AppButton(t("clear"), Icons.Outlined.Delete, BtnStyle.Danger, Modifier.fillMaxWidth().padding(top = 8.dp)) { confirmClear = true }
         Note(t("privacy"), Icons.Outlined.Lock)
     }
-    Text(
-        "Ícones: Material Symbols (Apache 2.0)",
-        Modifier.fillMaxWidth().padding(top = 4.dp), fontSize = 12.sp, color = col.muted, textAlign = TextAlign.Center,
-    )
+    // ---------- sobre ----------
+    SectionCard(t("about"), Icons.Outlined.Info) {
+        Text(t("aboutApp"), fontWeight = FontWeight.Bold, color = col.ink)
+        Spacer(Modifier.height(4.dp))
+        InfoRow(t("version"), BuildConfig.VERSION_NAME)
+        AppDivider()
+        val bm = BuildConfig.BUILD_MONTH
+        InfoRow(t("updated"), if (bm.length == 7) "${Ym.monthOnly(bm, s.lang)} ${t("de")} ${bm.take(4)}" else bm)
+        AppButton(t("whatsNew"), Icons.Outlined.NewReleases, BtnStyle.Tonal, Modifier.fillMaxWidth().padding(top = 8.dp)) {
+            runCatching { ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/junon-dev/relatorio-campo/releases"))) }
+        }
+        Text(
+            "Ícones: Material Symbols (Apache 2.0)",
+            Modifier.fillMaxWidth().padding(top = 10.dp), fontSize = 12.sp, color = col.muted, textAlign = TextAlign.Center,
+        )
+    }
 
     if (confirmClear) {
         AlertDialog(

@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                 )
                 onDispose {}
             }
-            RelatorioTheme(dark = dark) {
+            RelatorioTheme(dark = dark, accent = settings.accent, fontSize = settings.fontSize) {
                 App(
                     vm = vm,
                     gotoMonth = gotoMonth.value, onGotoHandled = { gotoMonth.value = null },

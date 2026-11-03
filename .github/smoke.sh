@@ -58,6 +58,31 @@ sys.exit(0 if ok else 1)
 PY
 }
 check() { has_text "$1" || { echo "Widget errado: '$1' não aparece ($2)" | tee -a telas/resumo.txt; MISSING=$((MISSING+1)); }; }
+# toca numa barra deslizante (n-ésima na tela) na posição fração (0 a 1)
+tap_seek() {
+  adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+  adb pull /sdcard/ui.xml ui.xml >/dev/null 2>&1
+  local xy
+  xy=$(python3 - "$1" "$2" <<'PY'
+import re, sys, xml.etree.ElementTree as ET
+n, f = int(sys.argv[1]), float(sys.argv[2]); found = 0
+nodes = list(ET.parse('ui.xml').iter('node'))
+anchor_y = None
+if n == 0:  # 0 = a barra logo abaixo do texto "Tamanho do texto"
+    for node in nodes:
+        if (node.get('text') or '').strip() in ('Tamanho do texto', 'Tamaño del texto'):
+            anchor_y = int(re.findall(r'\d+', node.get('bounds'))[3]); break
+for node in nodes:
+    if 'SeekBar' in (node.get('class') or ''):
+        found += 1
+        if found == n or (n == 0 and anchor_y is not None and int(re.findall(r'\d+', node.get('bounds'))[1]) > anchor_y):
+            x1, y1, x2, y2 = map(int, re.findall(r'\d+', node.get('bounds')))
+            print(int(x1 + (x2 - x1) * f), (y1 + y2) // 2); break
+PY
+)
+  if [ -n "$xy" ]; then adb shell input tap $xy; sleep 2; return 0; fi
+  echo "Barra $1 não encontrada" | tee -a telas/resumo.txt; MISSING=$((MISSING+1)); return 1
+}
 shot() { adb exec-out screencap -p > "telas/$1.png"; }
 
 adb shell am start -W -n $PKG/.MainActivity
@@ -111,9 +136,15 @@ tap_text "Ajustes"
 for i in 1 2 3; do adb shell input swipe 540 600 540 1800 200; done
 for i in 1 2 3 4 5; do adb shell input swipe 540 1800 540 500 300; sleep 1; done
 tap_text "Escuro"; sleep 1; shot 8-ajustes-escuro
+tap_text "Azul"; sleep 1
+for i in 1 2; do adb shell input swipe 540 1500 540 1100 300; sleep 1; done
+tap_seek 0 0.98; shot 8b-azul-fonte-grande
+for i in 1 2 3 4 5 6; do adb shell input swipe 540 1800 540 500 300; sleep 1; done
+shot 8c-sobre
 tap_text "Mês"; sleep 1; shot 9-mes-escuro
 tap_text "ES"; sleep 1; shot 10-mes-espanhol
 
+adb shell input keyevent KEYCODE_HOME; sleep 4; shot w10-widgets-azul
 adb logcat -d > telas/logcat.txt
 adb logcat -d -s AndroidRuntime:E > telas/erros.txt || true
 echo "Botões não encontrados: $MISSING" | tee -a telas/resumo.txt

@@ -67,6 +67,9 @@ class Str(val lang: String) {
             "wHint" to "Se o botão não funcionar: toque e segure num espaço vazio da tela inicial → Widgets → Relatório de Campo.",
             "wAsked" to "Confirme na janela que apareceu.",
             "wOpacity" to "Fundo dos widgets", "wOpacityD" to "{n}% opaco", "wOpacityHint" to "Com pouco fundo, o texto pode ficar difícil de ler sobre papéis de parede muito claros ou escuros.",
+            "accent" to "Cor do app", "c_verde" to "Verde", "c_azul" to "Azul", "c_roxo" to "Roxo", "c_vinho" to "Vinho", "c_petroleo" to "Petróleo",
+            "fontSize" to "Tamanho do texto", "fontPreview" to "Exemplo: 12 h a relatar",
+            "about" to "Sobre", "aboutApp" to "Relatório de Campo para Android", "version" to "Versão", "updated" to "Atualizado em", "de" to "de", "whatsNew" to "Novidades e versões anteriores",
             "ok" to "OK", "cancel" to "Cancelar", "langLabel" to "Idioma",
         )
 
@@ -128,6 +131,9 @@ class Str(val lang: String) {
             "wHint" to "Si el botón no funciona: mantenga presionado un espacio vacío de la pantalla de inicio → Widgets → Informe de Predicación.",
             "wAsked" to "Confirme en la ventana que apareció.",
             "wOpacity" to "Fondo de los widgets", "wOpacityD" to "{n}% opaco", "wOpacityHint" to "Con poco fondo, el texto puede ser difícil de leer sobre fondos de pantalla muy claros u oscuros.",
+            "accent" to "Color de la app", "c_verde" to "Verde", "c_azul" to "Azul", "c_roxo" to "Morado", "c_vinho" to "Vino", "c_petroleo" to "Petróleo",
+            "fontSize" to "Tamaño del texto", "fontPreview" to "Ejemplo: 12 h a informar",
+            "about" to "Acerca de", "aboutApp" to "Informe de Predicación para Android", "version" to "Versión", "updated" to "Actualizado en", "de" to "de", "whatsNew" to "Novedades y versiones anteriores",
             "ok" to "OK", "cancel" to "Cancelar", "langLabel" to "Idioma",
         )
     }

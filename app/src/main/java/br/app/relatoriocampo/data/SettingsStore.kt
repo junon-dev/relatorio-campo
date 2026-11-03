@@ -43,6 +43,8 @@ class SettingsStore private constructor(context: Context) {
             timerStart = if (prefs.contains("timerStart")) prefs.getLong("timerStart", 0L) else null,
             askedNotif = prefs.getBoolean("askedNotif", d.askedNotif),
             widgetOpacity = prefs.getInt("widgetOpacity", d.widgetOpacity),
+            accent = prefs.getString("accent", d.accent) ?: d.accent,
+            fontSize = prefs.getInt("fontSize", d.fontSize),
         )
     }
 
@@ -56,6 +58,8 @@ class SettingsStore private constructor(context: Context) {
             if (s.timerStart != null) putLong("timerStart", s.timerStart) else remove("timerStart")
             putBoolean("askedNotif", s.askedNotif)
             putInt("widgetOpacity", s.widgetOpacity)
+            putString("accent", s.accent)
+            putInt("fontSize", s.fontSize)
         }.apply()
     }
 

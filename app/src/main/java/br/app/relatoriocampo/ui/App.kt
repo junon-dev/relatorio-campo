@@ -69,7 +69,10 @@ import br.app.relatoriocampo.domain.Calc
 import br.app.relatoriocampo.domain.Settings
 import br.app.relatoriocampo.domain.Str
 import br.app.relatoriocampo.domain.Ym
+import br.app.relatoriocampo.ui.theme.LocalSystemFontScale
 import br.app.relatoriocampo.ui.theme.appColors
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 
 @Composable
 fun App(
@@ -212,6 +215,9 @@ private fun MonthNav(view: String, cur: String, onPrev: () -> Unit, onNext: () -
 private fun BottomBar(tab: String, onTab: (String) -> Unit) {
     val c = appColors
     val t = LocalStr.current
+    val d = LocalDensity.current
+    val capped = minOf(d.fontScale, LocalSystemFontScale.current * 1.12f)
+    CompositionLocalProvider(LocalDensity provides Density(d.density, capped)) {
     Surface(color = c.card) {
         Column {
             AppDivider()
@@ -228,6 +234,7 @@ private fun BottomBar(tab: String, onTab: (String) -> Unit) {
                 SecondaryTab(Icons.Outlined.Tune, t("tSettings"), tab == "settings") { onTab("settings") }
             }
         }
+    }
     }
 }
 

@@ -17,6 +17,8 @@ android {
         targetSdk = 35
         versionCode = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInt()
         versionName = "1.0." + (System.getenv("GITHUB_RUN_NUMBER") ?: "0")
+        // Mês/ano da compilação, mostrado em Ajustes → Sobre
+        buildConfigField("String", "BUILD_MONTH", "\"${java.time.YearMonth.now()}\"")
     }
 
     // Chave fixa: assim cada nova versão instala por cima da anterior sem precisar desinstalar.
@@ -43,7 +45,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    buildFeatures { compose = true }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
 }
 
 kotlin {

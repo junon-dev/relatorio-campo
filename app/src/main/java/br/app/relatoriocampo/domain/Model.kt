@@ -52,6 +52,8 @@ data class Settings(
     val timerStart: Long? = null,
     val askedNotif: Boolean = false,
     val widgetOpacity: Int = 100, // % de opacidade do fundo dos widgets
+    val accent: String = "verde", // cor do app: verde | azul | roxo | vinho | petroleo
+    val fontSize: Int = 2, // tamanho do texto: 0 (menor) a 5 (maior); 2 = normal
 )
 
 /** Resultado calculado de um mês. Tempos em minutos. */

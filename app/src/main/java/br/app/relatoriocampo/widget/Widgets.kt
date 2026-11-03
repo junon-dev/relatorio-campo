@@ -4,6 +4,8 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.os.Build
 import android.os.SystemClock
 import android.widget.RemoteViews
 import androidx.compose.runtime.Composable
@@ -11,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,6 +74,7 @@ import br.app.relatoriocampo.domain.Str
 import br.app.relatoriocampo.domain.Ym
 import br.app.relatoriocampo.domain.fmtMin
 import br.app.relatoriocampo.notify.Reminders
+import br.app.relatoriocampo.ui.theme.palette
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
@@ -97,17 +101,25 @@ private object WC {
     val bg = DayNight(day = Color(0xFFFFFFFF), night = Color(0xFF18201C))
     val ink = DayNight(day = Color(0xFF18211D), night = Color(0xFFE7ECE9))
     val muted = DayNight(day = Color(0xFF56605A), night = Color(0xFF9BA8A1))
-    val accent = DayNight(day = Color(0xFF2B6A4C), night = Color(0xFF6CC296))
-    val accentInk = DayNight(day = Color(0xFFFFFFFF), night = Color(0xFF0B1410))
-    val accentSoft = DayNight(day = Color(0xFFE2EFE7), night = Color(0xFF1F3329))
-    val accentText = DayNight(day = Color(0xFF225A40), night = Color(0xFF8FD6B0))
     val amber = DayNight(day = Color(0xFF8A5410), night = Color(0xFFE9B46B))
     val amberSoft = DayNight(day = Color(0xFFFBECD6), night = Color(0xFF3A2B17))
     val slate = DayNight(day = Color(0xFF44515F), night = Color(0xFFB5C0CC))
     val slateSoft = DayNight(day = Color(0xFFE7EBF0), night = Color(0xFF27303A))
 
-    fun cat(cat: String) = when (cat) { "aux" -> amber; "reg" -> accentText; else -> slate }
-    fun catSoft(cat: String) = when (cat) { "aux" -> amberSoft; "reg" -> accentSoft; else -> slateSoft }
+}
+
+/** Cores de destaque conforme a cor escolhida no app (Ajustes → Aparência). */
+private class WP(key: String) {
+    private val pal = palette(key)
+    private fun pc(i: Int) = DayNight(day = pal.light[i], night = pal.dark[i])
+    val accent = pc(0)
+    val accentInk = pc(1)
+    val accentSoft = pc(2)
+    val accentText = pc(3)
+    val textDay: Int = pal.light[3].toArgb()
+    val textNight: Int = pal.dark[3].toArgb()
+    fun cat(cat: String) = when (cat) { "aux" -> WC.amber; "reg" -> accentText; else -> WC.slate }
+    fun catSoft(cat: String) = when (cat) { "aux" -> WC.amberSoft; "reg" -> accentSoft; else -> WC.slateSoft }
 }
 
 private fun style(color: ColorProvider, size: Int, bold: Boolean = false) =
@@ -189,13 +201,14 @@ class ResumoWidget : GlanceAppWidget() {
 
 @Composable
 private fun ResumoContent(d: WidgetData) {
+    val p = WP(d.s.accent)
     val t = d.t
     val c = d.all.getValue(d.cur)
     val wide = LocalSize.current.width >= 220.dp
     val left = ReminderCalc.daysLeft(LocalDate.now())
     Card(d.s.widgetOpacity, GlanceModifier.clickable(openApp())) {
         Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(t(c.cat + "S"), GlanceModifier.defaultWeight(), style = style(WC.cat(c.cat), 12, bold = true), maxLines = 1)
+            Text(t(c.cat + "S"), GlanceModifier.defaultWeight(), style = style(p.cat(c.cat), 12, bold = true), maxLines = 1)
             Text(Ym.short(d.cur, d.s.lang), style = style(WC.muted, 12), maxLines = 1)
         }
         Spacer(GlanceModifier.height(2.dp))
@@ -209,7 +222,7 @@ private fun ResumoContent(d: WidgetData) {
             LinearProgressIndicator(
                 progress = if (goal > 0) (c.reported / goal.toFloat()).coerceIn(0f, 1f) else 0f,
                 modifier = GlanceModifier.fillMaxWidth().height(6.dp),
-                color = WC.cat(c.cat), backgroundColor = WC.catSoft(c.cat),
+                color = p.cat(c.cat), backgroundColor = p.catSoft(c.cat),
             )
             Spacer(GlanceModifier.height(4.dp))
             Text(
@@ -222,7 +235,7 @@ private fun ResumoContent(d: WidgetData) {
                 Spacer(GlanceModifier.width(6.dp))
                 Text(t("studiesUnit"), GlanceModifier.padding(bottom = 6.dp), style = style(WC.muted, 12), maxLines = 1)
             }
-            Text(if (c.participated) "✓ " + t("partYes") else t("wNotYet"), style = style(if (c.participated) WC.accentText else WC.muted, 12, bold = c.participated), maxLines = 1)
+            Text(if (c.participated) "✓ " + t("partYes") else t("wNotYet"), style = style(if (c.participated) p.accentText else WC.muted, 12, bold = c.participated), maxLines = 1)
         }
         if (wide) {
             Spacer(GlanceModifier.height(6.dp))
@@ -265,6 +278,7 @@ class CronometroWidget : GlanceAppWidget() {
 
 @Composable
 private fun CronometroContent(d: WidgetData) {
+    val p = WP(d.s.accent)
     val t = d.t
     val ctx = LocalContext.current
     val start = d.s.timerStart
@@ -277,6 +291,8 @@ private fun CronometroContent(d: WidgetData) {
                 if (start != null) {
                     val rv = RemoteViews(ctx.packageName, R.layout.widget_chronometer).apply {
                         setChronometer(R.id.chrono, SystemClock.elapsedRealtime() - (System.currentTimeMillis() - start), null, true)
+                        if (Build.VERSION.SDK_INT >= 31) setColorInt(R.id.chrono, "setTextColor", p.textDay, p.textNight)
+                        else setTextColor(R.id.chrono, if ((ctx.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) p.textNight else p.textDay)
                     }
                     AndroidRemoteViews(rv)
                 } else {
@@ -288,7 +304,7 @@ private fun CronometroContent(d: WidgetData) {
                 )
             }
             Box(
-                GlanceModifier.size(48.dp).cornerRadius(24.dp).background(if (start != null) WC.amber else WC.accent)
+                GlanceModifier.size(48.dp).cornerRadius(24.dp).background(if (start != null) WC.amber else p.accent)
                     .clickable(if (start != null) actionRunCallback<StopTimerAction>() else actionRunCallback<StartTimerAction>()),
                 contentAlignment = Alignment.Center,
             ) {
@@ -296,7 +312,7 @@ private fun CronometroContent(d: WidgetData) {
                     ImageProvider(if (start != null) R.drawable.ic_w_stop else R.drawable.ic_w_play),
                     contentDescription = if (start != null) t("stop") else t("start"),
                     modifier = GlanceModifier.size(24.dp),
-                    colorFilter = ColorFilter.tint(WC.accentInk),
+                    colorFilter = ColorFilter.tint(p.accentInk),
                 )
             }
         }
@@ -304,7 +320,7 @@ private fun CronometroContent(d: WidgetData) {
         Row(GlanceModifier.fillMaxWidth()) {
             listOf(15 to "+15", 30 to "+30", 60 to "+1h", 120 to "+2h").forEachIndexed { i, (q, label) ->
                 if (i > 0) Spacer(GlanceModifier.width(6.dp))
-                Pill(label, WC.accentText, WC.accentSoft, GlanceModifier.defaultWeight(),
+                Pill(label, p.accentText, p.accentSoft, GlanceModifier.defaultWeight(),
                     actionRunCallback<AddMinutesAction>(actionParametersOf(MinutesKey to q)))
             }
         }
@@ -373,6 +389,7 @@ class StatusWidget : GlanceAppWidget() {
 
 @Composable
 private fun StatusContent(d: WidgetData) {
+    val p = WP(d.s.accent)
     val t = d.t
     val ctx = LocalContext.current
     val prev = Ym.add(d.cur, -1)
@@ -385,7 +402,7 @@ private fun StatusContent(d: WidgetData) {
             Image(
                 ImageProvider(if (pending) R.drawable.ic_w_send else R.drawable.ic_w_check), contentDescription = null,
                 modifier = GlanceModifier.size(18.dp),
-                colorFilter = ColorFilter.tint(if (pending) WC.amber else WC.accentText),
+                colorFilter = ColorFilter.tint(if (pending) WC.amber else p.accentText),
             )
             Spacer(GlanceModifier.width(6.dp))
             Text(t("wReportOf", "m" to prevName), style = style(WC.muted, 12, bold = true), maxLines = 1)
@@ -393,7 +410,7 @@ private fun StatusContent(d: WidgetData) {
         Spacer(GlanceModifier.height(4.dp))
         Text(
             when { pending -> t("wPending"); sent -> t("wSent"); else -> t("wNothing") },
-            style = style(if (pending) WC.amber else WC.accentText, 18, bold = true), maxLines = 1,
+            style = style(if (pending) WC.amber else p.accentText, 18, bold = true), maxLines = 1,
         )
         Spacer(GlanceModifier.height(10.dp))
         if (pending) {
@@ -401,9 +418,9 @@ private fun StatusContent(d: WidgetData) {
                 .putExtra(Reminders.EXTRA_GOTO, prev)
                 .putExtra(MainActivity.EXTRA_SHARE, true)
             Row(GlanceModifier.fillMaxWidth()) {
-                Pill(t("wSend"), WC.accentInk, WC.accent, GlanceModifier.defaultWeight(), actionStartActivity(share))
+                Pill(t("wSend"), p.accentInk, p.accent, GlanceModifier.defaultWeight(), actionStartActivity(share))
                 Spacer(GlanceModifier.width(6.dp))
-                Pill(t("markSent"), WC.accentText, WC.accentSoft, GlanceModifier.defaultWeight(),
+                Pill(t("markSent"), p.accentText, p.accentSoft, GlanceModifier.defaultWeight(),
                     actionRunCallback<MarkSentAction>(actionParametersOf(MonthKey to prev)))
             }
         } else {
@@ -438,6 +455,7 @@ class MetaWidget : GlanceAppWidget() {
 
 @Composable
 private fun MetaContent(d: WidgetData) {
+    val p = WP(d.s.accent)
     val t = d.t
     val sy = Ym.serviceYear(d.cur)
     val yp = Calc.yearProgress(sy, d.all, d.months, d.s, d.cur)
@@ -454,13 +472,13 @@ private fun MetaContent(d: WidgetData) {
             }
             LinearProgressIndicator(
                 progress = if (yp.goal > 0) (yp.hours / yp.goal.toFloat()).coerceIn(0f, 1f) else 0f,
-                modifier = GlanceModifier.fillMaxWidth().height(6.dp), color = WC.accent, backgroundColor = WC.accentSoft,
+                modifier = GlanceModifier.fillMaxWidth().height(6.dp), color = p.accent, backgroundColor = p.accentSoft,
             )
             Spacer(GlanceModifier.height(8.dp))
             val diff = yp.diff
             Text(
                 when { diff == 0 -> t("onPace"); diff > 0 -> t("ahead", "n" to diff); else -> t("behind", "n" to -diff) },
-                style = style(if (diff < 0) WC.amber else WC.accentText, 13, bold = true), maxLines = 1,
+                style = style(if (diff < 0) WC.amber else p.accentText, 13, bold = true), maxLines = 1,
             )
             Text(t("wExpected", "n" to yp.expected), style = style(WC.muted, 11), maxLines = 1)
         }
