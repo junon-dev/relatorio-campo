@@ -17,6 +17,8 @@ jobs:
       - name: Publicar a pasta web no branch gh-pages (GitHub Pages)
         run: |
           cd web
+          # versão e mês/ano da atualização, mostrados em Ajustes → Sobre
+          sed -i "s/__VERSAO_WEB__/${{ github.run_number }}/; s/__DATA_WEB__/$(date -u +%Y-%m)/" index.html
           touch .nojekyll
           git init -q -b gh-pages
           git add -A

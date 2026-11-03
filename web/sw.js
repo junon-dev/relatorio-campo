@@ -1,5 +1,5 @@
 // Funciona sem internet: guarda o app no aparelho e usa a versão da rede quando houver conexão.
-const CACHE = 'relatorio-campo-v1';
+const CACHE = 'relatorio-campo-v2';
 const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
