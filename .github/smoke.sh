@@ -77,10 +77,13 @@ for node in nodes:
         found += 1
         if found == n or (n == 0 and anchor_y is not None and int(re.findall(r'\d+', node.get('bounds'))[1]) > anchor_y):
             x1, y1, x2, y2 = map(int, re.findall(r'\d+', node.get('bounds')))
-            print(int(x1 + (x2 - x1) * f), (y1 + y2) // 2); break
+            y = (y1 + y2) // 2
+            print(int(x1 + (x2 - x1) * 0.5), y, int(x1 + (x2 - x1) * f), y); break
 PY
 )
-  if [ -n "$xy" ]; then adb shell input tap $xy; sleep 2; return 0; fi
+  cp ui.xml telas/ui-barra.xml 2>/dev/null
+  # arrasta o controle do meio até a posição desejada (mais confiável que um toque)
+  if [ -n "$xy" ]; then set -- $xy; adb shell input swipe $1 $2 $3 $4 600; sleep 2; return 0; fi
   echo "Barra $1 não encontrada" | tee -a telas/resumo.txt; MISSING=$((MISSING+1)); return 1
 }
 shot() { adb exec-out screencap -p > "telas/$1.png"; }
