@@ -5,8 +5,9 @@ App Android **Relatório de Campo** (Kotlin + Jetpack Compose). O dono do projet
 ## Entrega padrão de cada nova versão
 Depois de enviar qualquer mudança para `main`:
 1. Acompanhe o workflow "Gerar APK" até terminar (`gh run watch <id> --exit-status`). Os jobs `build` e `emulador` precisam passar.
-2. Confira os prints e o `resumo.txt` no branch `ci-telas` (`git clone --depth 1 -b ci-telas ...`); o armazenamento de artefatos do Actions não é acessível pela sessão.
-3. Baixe o APK publicado e **envie o arquivo direto na conversa** (SendUserFile), sem esperar o usuário pedir:
+2. Se o job `build` falhar, leia o erro no branch `ci-log` (`erros.txt` e `final.txt`); os logs do Actions não são acessíveis pela sessão.
+3. Confira os prints e o `resumo.txt` no branch `ci-telas` (`git clone --depth 1 -b ci-telas ...`); o armazenamento de artefatos do Actions não é acessível pela sessão.
+4. Baixe o APK publicado e **envie o arquivo direto na conversa** (SendUserFile), sem esperar o usuário pedir:
    `gh api -H "Accept: application/octet-stream" repos/junon-dev/relatorio-campo/releases/assets/<id> > RelatorioCampo.apk`
    (pegue o `<id>` de `RelatorioCampo.apk` em `gh api repos/junon-dev/relatorio-campo/releases/latest`).
 

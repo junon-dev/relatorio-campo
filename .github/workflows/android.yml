@@ -25,14 +25,27 @@ jobs:
       - name: Testes da lógica
         run: |
           chmod +x gradlew
-          ./gradlew testDebugUnitTest --stacktrace
+          set -o pipefail
+          ./gradlew testDebugUnitTest --stacktrace 2>&1 | tee -a build.log
 
       - name: APK de teste (debug)
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --stacktrace 2>&1 | tee -a build.log
 
       - name: APK otimizado (release)
         continue-on-error: true
         run: ./gradlew assembleRelease --stacktrace
+
+      - name: Guardar o erro no branch ci-log
+        if: failure()
+        run: |
+          mkdir -p ci-log && cd ci-log
+          grep -nE "^e: |error:|FAILED|What went wrong|> Task .* FAILED|Exception" ../build.log | head -200 > erros.txt || true
+          tail -300 ../build.log > final.txt
+          git init -q -b ci-log && git add -A
+          git -c user.name="CI" -c user.email="ci@users.noreply.github.com" commit -qm "Log do build ${{ github.run_number }}"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" ci-log
 
       - name: Renomear arquivos
         run: |
